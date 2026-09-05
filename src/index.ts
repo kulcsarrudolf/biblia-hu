@@ -9,3 +9,4 @@ export * from './books';
 export * from './translations';
 export * from './reference';
 export * from './utils/text';
+export { biblia } from './bible';
