@@ -6,4 +6,5 @@ export const VERSION: string = version;
 export * from './types';
 export * from './errors';
 export * from './books';
+export * from './translations';
 export * from './utils/text';
