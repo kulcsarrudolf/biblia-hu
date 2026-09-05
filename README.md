@@ -76,6 +76,146 @@ The book token is everything before the chapter number, so multi word names work
 Books are matched exactly after normalization (dots and inner spaces removed, accents stripped, lowercased), with no prefix or fuzzy matching.
 `Ez` is Ezékiel and never Ezsdrás, `Jn` is János and never Jónás.
 
+## CLI
+
+The package ships a `biblia` binary.
+Install it globally to get the command on your path:
+
+```bash
+npm install --global biblia-hu
+```
+
+Or run it without installing:
+
+```bash
+npx biblia-hu --p="Jn 3:16"
+```
+
+Every flag:
+
+```bash
+# A passage: --p and --passage are the same flag
+biblia --p="Jn 3:16"
+biblia --passage="Zsolt 139:23-24"
+biblia --p="Zsolt 139:23-24; Jn 3:16"
+
+# The books of the canon, with this translation's names
+biblia --showBooks
+biblia --showBooks --old
+biblia --showBooks --new
+
+# The structure of one book
+biblia --bookDetails Zsolt
+
+# Full text search, at most 20 hits
+biblia --search="szeretet"
+biblia --search="Isten" --new
+biblia --search="szeretet" --old
+
+# The verse of the day, the same verse for everyone on a given day
+biblia --today
+
+# The translations you can select
+biblia --translations
+
+# Interactive mode
+biblia -i
+
+# Usage
+biblia --help
+```
+
+A passage prints the normalized reference with the translation, then one line per verse:
+
+```
+$ biblia --p="Jn 3:16"
+Jn 3:16 (RÚF)
+
+16. Mert úgy szerette Isten a világot, hogy egyszülött Fiát adta, hogy aki hisz őbenne, el ne vesszen, hanem örök élete legyen.
+```
+
+Search prints one `reference: text` line per hit, and `--bookDetails` prints a small table:
+
+```
+$ biblia --bookDetails Zsolt
+A Zsoltárok könyve (Zsolt)
+
+Field         Value
+------------  ----------
+Id            PSA
+Abbreviation  Zsolt
+Testament     Ószövetség
+Order         19
+Chapters      150
+Verses        2527
+```
+
+Anything that fails prints the Hungarian error message and exits with code 1.
+
+### Choosing a translation
+
+Three ways, in order of precedence: the `-t` flag, the `--translation=` flag, then the `BIBLIA_TRANSLATION` environment variable.
+Without any of them the CLI uses `RUF`.
+
+```bash
+biblia -t RUF --p="Jn 3:16"
+biblia --translation=RUF --today
+
+export BIBLIA_TRANSLATION=RUF
+biblia --p="Jn 3:16"
+```
+
+An id whose data is not bundled prints the ids you can use and exits with code 1.
+`biblia --translations` lists the same ids with their metadata:
+
+```
+$ biblia --translations
+Id   Name                   Year  Publisher
+---  ---------------------  ----  ---------------------
+RUF  Revideált új fordítás  2014  Magyar Bibliatársulat
+```
+
+### Interactive mode
+
+`biblia -i` starts a REPL.
+The prompt names the current translation, and `translation <id>` switches it without restarting.
+
+```
+$ biblia -i
+biblia-hu interactive mode.
+Translation: Revideált új fordítás (RÚF).
+Type "help" for the commands, "exit" to leave.
+
+biblia(RUF)> Jn 3:16
+Jn 3:16 (RÚF)
+
+16. Mert úgy szerette Isten a világot, hogy egyszülött Fiát adta, hogy aki hisz őbenne, el ne vesszen, hanem örök élete legyen.
+
+biblia(RUF)> search szeretet
+1Móz 19:19: Ha már kegyelmes voltál szolgádhoz, és olyan nagy szeretettel bánsz velem, ...
+
+biblia(RUF)> today
+2Kor 5:17
+
+Ezért ha valaki Krisztusban van, új teremtés az: a régi elmúlt, és íme: új jött létre.
+
+biblia(RUF)> translation RUF
+Revideált új fordítás (RÚF)
+
+biblia(RUF)> exit
+Viszontlátásra!
+```
+
+| Command            | What it does                              |
+| ------------------ | ----------------------------------------- |
+| `<reference>`      | Prints the passage, for example `Jn 3:16` |
+| `search <query>`   | Searches the verse text, at most 10 hits  |
+| `today`            | Prints the verse of the day               |
+| `books`            | Lists every book of the canon             |
+| `translation <id>` | Switches to another translation           |
+| `help`             | Lists these commands                      |
+| `exit`             | Leaves the interactive mode               |
+
 ## API reference
 
 ### `biblia(translation, options?)`
