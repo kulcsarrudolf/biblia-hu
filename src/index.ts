@@ -7,4 +7,5 @@ export * from './types';
 export * from './errors';
 export * from './books';
 export * from './translations';
+export * from './reference';
 export * from './utils/text';
