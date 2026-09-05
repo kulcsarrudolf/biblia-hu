@@ -36,6 +36,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "validate": "tsx scripts/verify-data.ts",
+    "import:ruf": "tsx scripts/import-ruf.ts",
     "postinstall": "husky",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
