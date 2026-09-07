@@ -32,6 +32,7 @@ Installing also sets up the Husky git hooks through the `postinstall` script.
 | `yarn format`        | Format `src`, `scripts`, and `tests` with Prettier              |
 | `yarn format:check`  | Check formatting without writing                                |
 | `yarn validate`      | Validate the bundled Bible data                                 |
+| `yarn verify:pack`   | Check that `npm pack` ships the right files                     |
 | `yarn import:ruf`    | Import the RÚF text from a `biblia-ruf` checkout                |
 | `yarn scrape:karoli` | Scrape the Revideált Károli text into `json/karoli`             |
 | `yarn changeset`     | Add a changeset describing your change                          |

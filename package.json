@@ -36,6 +36,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "validate": "tsx scripts/verify-data.ts",
+    "verify:pack": "tsx scripts/verify-pack.ts",
     "import:ruf": "tsx scripts/import-ruf.ts",
     "scrape:karoli": "tsx scripts/scrape-karoli/index.ts",
     "postinstall": "husky",
