@@ -38,6 +38,18 @@ const EXPECTATIONS: Partial<Record<TranslationId, TranslationExpectations>> = {
     psalm100Title: 'Adjunk hálát alkotónknak!',
     genesisOpening: 'Kezdetben',
   },
+  KAROLI: {
+    john316:
+      'Mert úgy szerette Isten a világot, hogy az ő egyszülött Fiát adta, hogy aki hisz őbenne, el ne vesszen, hanem örök élete legyen.',
+    psalm139End: [
+      'Vizsgálj meg, Istenem, ismerd meg szívemet! Próbálj meg, és ismerd meg gondolataimat!',
+      'Nézd meg, hogy ártalmas úton járok-e, és vezess engem az örökkévalóság útján!',
+    ],
+    psalm100Verses: 5,
+    // The scraped files carry no headings, the site does not publish any.
+    hasChapterTitles: false,
+    genesisOpening: 'Kezdetben',
+  },
 };
 
 /** The expectations of one translation, or a pointed failure when they are missing. */

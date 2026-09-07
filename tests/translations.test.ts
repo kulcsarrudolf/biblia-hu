@@ -72,24 +72,15 @@ describe('the translation table', () => {
 });
 
 describe('getTranslation', () => {
-  it('registers only RUF for now', () => {
-    expect(TRANSLATION_IDS).toEqual(['RUF']);
+  it('registers both translations', () => {
+    expect(TRANSLATION_IDS).toEqual(['RUF', 'KAROLI']);
     expect(isTranslationId('RUF')).toBe(true);
-    expect(isTranslationId('KAROLI')).toBe(false);
+    expect(isTranslationId('KAROLI')).toBe(true);
   });
 
   it('returns the registered translation', () => {
     expect(getTranslation('RUF')).toBe(TRANSLATIONS.RUF);
-  });
-
-  it('throws UNKNOWN_TRANSLATION for KAROLI until its data lands', () => {
-    expect(() => getTranslation('KAROLI')).toThrow(BibliaError);
-    try {
-      getTranslation('KAROLI');
-    } catch (error) {
-      expect((error as BibliaError).code).toBe('UNKNOWN_TRANSLATION');
-      expect((error as BibliaError).message).toContain('KAROLI');
-    }
+    expect(getTranslation('KAROLI')).toBe(TRANSLATIONS.KAROLI);
   });
 
   it('throws UNKNOWN_TRANSLATION for an unknown id', () => {
