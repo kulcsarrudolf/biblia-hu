@@ -53,12 +53,21 @@ Everything that touches verse text is asynchronous and reads the bundled JSON th
 
 ## Translations
 
-| Id    | Name                  | Year | Publisher             |
-| ----- | --------------------- | ---- | --------------------- |
-| `RUF` | Revideált új fordítás | 2014 | Magyar Bibliatársulat |
+| Id       | Name                              | Year | Publisher             |
+| -------- | --------------------------------- | ---- | --------------------- |
+| `RUF`    | Revideált új fordítás             | 2014 | Magyar Bibliatársulat |
+| `KAROLI` | Revideált Károli Biblia (Veritas) | 2011 | Veritas Kiadó         |
 
 `TRANSLATION_IDS` lists the translations whose data is bundled, and `biblia()` throws `UNKNOWN_TRANSLATION` for anything else.
-The Revideált Károli (Veritas, 2011) arrives in a later release, so `KAROLI` is not usable yet.
+
+Both texts are under copyright and are redistributed here with attribution:
+
+- Revideált új fordítás (RÚF 2014), Magyar Bibliatársulat. A szöveg szerzői jogi védelem alatt áll.
+- Revideált Károli Biblia (2011), Veritas Kiadó. A szöveg szerzői jogi védelem alatt áll.
+
+The two differ in a few places worth knowing about.
+RÚF carries a heading on most chapters and Károli carries none, so `Chapter.title` and `BookDetails.chapterTitles` are only populated for RÚF.
+Chapter counts differ in two books: Jóel has 4 chapters in RÚF and 3 in Károli, Malakiás has 3 in RÚF and 4 in Károli.
 
 ## References
 
@@ -170,9 +179,10 @@ An id whose data is not bundled prints the ids you can use and exits with code 1
 
 ```
 $ biblia --translations
-Id   Name                   Year  Publisher
----  ---------------------  ----  ---------------------
-RUF  Revideált új fordítás  2014  Magyar Bibliatársulat
+Id      Name                               Year  Publisher
+------  ---------------------------------  ----  ---------------------
+RUF     Revideált új fordítás              2014  Magyar Bibliatársulat
+KAROLI  Revideált Károli Biblia (Veritas)  2011  Veritas Kiadó
 ```
 
 ### Interactive mode
