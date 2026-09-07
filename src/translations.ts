@@ -174,10 +174,10 @@ export const TRANSLATIONS: Record<TranslationId, Translation> = {
 /**
  * Translations that are ready to use.
  *
- * KAROLI has metadata but no bundled data yet, so it stays out of this list
- * until its json/karoli files land.
+ * Both translations have their data bundled under json/, so both are
+ * registered. The order here is the order the CLI lists them in.
  */
-export const TRANSLATION_IDS: readonly TranslationId[] = ['RUF'];
+export const TRANSLATION_IDS: readonly TranslationId[] = ['RUF', 'KAROLI'];
 
 /** True when the given id names a translation whose data is bundled. */
 export const isTranslationId = (id: string): id is TranslationId =>
