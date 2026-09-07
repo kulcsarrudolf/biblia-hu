@@ -1,14 +1,17 @@
 # biblia-hu
 
-Hungarian Bible translations (RÚF 2014, Revideált Károli 2011) library and CLI.
+[![npm version](https://img.shields.io/npm/v/biblia-hu.svg)](https://www.npmjs.com/package/biblia-hu)
+[![npm downloads](https://img.shields.io/npm/dm/biblia-hu.svg)](https://www.npmjs.com/package/biblia-hu)
+[![license](https://img.shields.io/npm/l/biblia-hu.svg)](LICENSE)
+[![CI](https://github.com/kulcsarrudolf/biblia-hu/actions/workflows/ci.yml/badge.svg)](https://github.com/kulcsarrudolf/biblia-hu/actions/workflows/ci.yml)
 
-`biblia-hu` is the successor of [`biblia-ruf`](https://github.com/kulcsarrudolf/biblia-ruf).
-It bundles Hungarian translations behind one API: passages, chapters, book details, full text search, and a verse of the day.
-Verse data ships inside the npm package as JSON, so the library has zero runtime dependencies and never fetches at runtime.
+Two Hungarian Bible translations as a TypeScript library and a CLI: the Revideált új fordítás (RÚF 2014, Magyar Bibliatársulat) and the Revideált Károli Biblia (2011, Veritas Kiadó).
 
-> **Work in progress.**
-> The package is being built in phases and has not been published yet.
-> See [docs/plan.md](docs/plan.md) for the roadmap and [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
+One API covers both: passages, chapters, book details, full text search, and a verse of the day.
+Both texts ship inside the npm package as JSON, 66 books and 31170 verses each, so the library has zero runtime dependencies and never fetches at runtime.
+
+`biblia-hu` is the successor of [`biblia-ruf`](https://github.com/kulcsarrudolf/biblia-ruf), which had RÚF only.
+See [migrating from biblia-ruf](#migrating-from-biblia-ruf) below.
 
 ## Install
 
@@ -68,6 +71,50 @@ Both texts are under copyright and are redistributed here with attribution:
 The two differ in a few places worth knowing about.
 RÚF carries a heading on most chapters and Károli carries none, so `Chapter.title` and `BookDetails.chapterTitles` are only populated for RÚF.
 Chapter counts differ in two books: Jóel has 4 chapters in RÚF and 3 in Károli, Malakiás has 3 in RÚF and 4 in Károli.
+
+## Migrating from biblia-ruf
+
+`biblia-ruf` had one translation and a flat set of functions.
+`biblia-hu` has two translations, so you pick one first and call methods on it.
+
+```ts
+// biblia-ruf
+import { getBiblePassage } from 'biblia-ruf';
+const verses = await getBiblePassage('Jn 3:16');
+
+// biblia-hu
+import { biblia } from 'biblia-hu';
+const ruf = biblia('RUF');
+const passage = await ruf.getPassage('Jn 3:16');
+const verses = passage.verses;
+```
+
+| `biblia-ruf`                   | `biblia-hu`                     | Changed                                      |
+| ------------------------------ | ------------------------------- | -------------------------------------------- |
+| `getBiblePassage(ref)`         | `bible.getPassage(ref)`         | Returns a `Passage`, verses are in `.verses` |
+| `getBibleBooks()`              | `bible.getBooks()`              | Book names follow the chosen translation     |
+| `getBibleBooksOldTestament()`  | `bible.getOldTestamentBooks()`  |                                              |
+| `getBibleBooksNewTestament()`  | `bible.getNewTestamentBooks()`  |                                              |
+| `getBookDetails(book)`         | `bible.getBookDetails(book)`    |                                              |
+| `searchBible(query, options?)` | `bible.search(query, options?)` | Now asynchronous                             |
+| `getDailyVerse(date?)`         | `bible.getDailyVerse(date?)`    | Now asynchronous                             |
+| `biblia --p="Jn 3:16"`         | `biblia --p="Jn 3:16"`          | Same flags, plus `-t` to pick a translation  |
+
+Three things will break a straight find and replace.
+
+`search` and `getDailyVerse` are asynchronous now.
+They read the bundled JSON like every other verse method, and the old versions only worked synchronously because the whole Bible was loaded eagerly.
+Add `await`.
+
+Verse ids are numbers, not strings.
+`verse.verse === 16` where you used to write `verse.verse === '16'`.
+The old data also carried six junk verses with ids like `_388` and empty text, which are gone.
+
+Errors are typed.
+Every failure is a `BibliaError` with a `code` you can branch on, instead of a plain `Error` you had to match by message.
+
+The CLI keeps its flags, so `biblia --p="Jn 3:16"`, `--showBooks`, `--bookDetails`, `--search`, `--today` and `-i` all still work.
+Add `-t KAROLI` to use the other translation.
 
 ## References
 
@@ -421,11 +468,25 @@ try {
 ```ts
 import { BOOKS, formatReference, normalizeKey, TRANSLATION_IDS } from 'biblia-hu';
 
-TRANSLATION_IDS; // ['RUF']
+TRANSLATION_IDS; // ['RUF', 'KAROLI']
 BOOKS.length; // 66
 formatReference({ book: 'PSA', chapter: 139, startVerse: 23, endVerse: 24 }); // 'Zsolt 139:23-24'
 normalizeKey('1. Mózes'); // '1mozes'
 ```
+
+## Data
+
+Both translations are bundled as JSON under `json/ruf/` and `json/karoli/`, one file per book, 66 files each.
+Nothing is fetched at runtime.
+
+RÚF comes from the data behind [abibliamindenkie.hu](https://abibliamindenkie.hu), imported from `biblia-ruf`.
+Revideált Károli was scraped once from [online-biblia.ro](https://www.online-biblia.ro/bible/4) with the script in `scripts/scrape-karoli/`, which is build time tooling and is not part of the published package.
+
+That scrape honours the `Crawl-delay: 10` in the site's robots.txt, one request every ten seconds, which is why a full run takes about three and a half hours.
+It was run once and the result committed.
+Contributors do not need to run it, and should not: see [CONTRIBUTING.md](CONTRIBUTING.md) if you have a reason to.
+
+Both texts are under copyright and are redistributed here with the attribution their publishers require, printed in the translations table above.
 
 ## License
 
