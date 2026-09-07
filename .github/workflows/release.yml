@@ -10,6 +10,11 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   release:
     runs-on: ubuntu-latest
+    # Changesets commits "Version Packages", which is not a conventional commit,
+    # so the commitlint hook rejects it and the release dies. Git hooks are for
+    # humans writing commits, not for CI, so Husky does not get installed here.
+    env:
+      HUSKY: 0
     permissions:
       contents: write
       pull-requests: write
