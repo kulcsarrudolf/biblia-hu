@@ -110,6 +110,24 @@ Use the `feat:`, `fix:`, `chore:`, `docs:`, `test:`, `ci:`, and `build:` types.
 
 ## Releases
 
-Releases are automated with [Changesets](https://github.com/changesets/changesets).
-When pull requests with changesets land on `main`, a "Version Packages" pull request is opened.
-Merging it publishes to npm with provenance and updates `CHANGELOG.md`.
+Publishing happens only from the `release` branch.
+Nothing that lands on `main` is published, so `main` is always safe to merge into.
+
+Versioning is a deliberate manual step:
+
+1. On `main`, consume the pending changesets.
+   This bumps the version in `package.json` and writes `CHANGELOG.md`:
+   ```bash
+   yarn version-packages
+   ```
+2. Commit the bump and land it on `main`.
+3. Rebase `release` onto `main` and push it.
+
+The push to `release` runs the release workflow, which reruns the checks, builds, and publishes to npm.
+Authentication uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) over OIDC, so there is no npm token in the repository and provenance attestations are generated automatically.
+Tags created during the publish are pushed back to the repository.
+
+`changeset publish` skips any version already on the registry, so re-running the workflow is safe.
+
+One constraint worth knowing before you touch CI: the npm trusted publisher is pinned to the workflow filename `release.yml`, and npm fixes that field once the connection exists.
+Renaming the file breaks publishing until the connection is deleted and recreated.
