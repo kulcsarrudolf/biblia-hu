@@ -7,7 +7,7 @@ It is the successor of `biblia-ruf`.
 The full master plan, with the per-phase prompts and the verified site and data facts, is in `docs/plan.md`.
 Read it before starting any phase.
 
-Layout: `src/` holds the library (`books.ts`, `translations.ts`, `bible.ts`, `reference.ts`, `passage.ts`, `book-details.ts`, `search.ts`, `daily-verse.ts`, `data/loader.ts`, `data/validate.ts`, `utils/`, `cli/`), `scripts/` holds build-time tooling (`import-ruf.ts`, `verify-data.ts`, `scrape-karoli/`) that is never shipped, `json/<dataDir>/<ID>.json` holds the data (`json/ruf/` and `json/karoli/`, 66 files each), `tests/` holds Jest tests that read the real `json/` files, and `bin/biblia.js` is the CLI entry.
+Layout: `src/` holds the library (`books.ts`, `translations.ts`, `bible.ts`, `reference.ts`, `passage.ts`, `book-details.ts`, `search.ts`, `daily-verse.ts`, `data/loader.ts`, `data/validate.ts`, `utils/`, `cli/`), `scripts/` holds build-time tooling (`import-ruf.ts`, `verify-data.ts`, `verify-pack.ts`) that is never shipped, `json/<dataDir>/<ID>.json` holds the data (`json/ruf/` and `json/karoli/`, 66 files each), `tests/` holds Jest tests that read the real `json/` files, and `bin/biblia.js` is the CLI entry.
 
 Data shape: `json/<dataDir>/<ID>.json` is `[{ chapter: number, title?: string, verses: [{ verse: number, text: string }] }]`.
 `verse` is a number.
@@ -27,8 +27,7 @@ Toolchain: Node 18 or newer (Node 24 locally), Yarn 4.17.1 via Corepack (`yarn i
 - In Markdown, start each prose sentence on its own line.
 - Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`, `ci:`, `build:`), several small commits per PR, no `Co-Authored-By` trailers, no agent attribution in PR bodies.
 - Every PR adds a changeset in `.changeset/` (`yarn changeset`). Phase 1 adds a `major` changeset; later phases add `minor` ones. Combined result of the first release is 1.0.0.
-- Zero runtime `dependencies`. Scraper tooling is devDependencies only.
+- Zero runtime `dependencies`. Build-time tooling is devDependencies only.
 - Tests read the real `json/` files, no mocks, no network.
-- Never run the full Károli scrape and never run anything that hits online-biblia.ro more than a handful of times without asking the user first.
-- Never commit partial scrapes. `json/karoli/` is either absent or complete (66 files).
+- `json/karoli/` and `json/ruf/` are complete (66 files each) and are edited only by deliberate data changes, never partially.
 - Do not merge PRs. Open the PR with `gh pr create`, report the URL, and stop.

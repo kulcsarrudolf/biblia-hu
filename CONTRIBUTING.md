@@ -34,7 +34,6 @@ Installing also sets up the Husky git hooks through the `postinstall` script.
 | `yarn validate`      | Validate the bundled Bible data                                 |
 | `yarn verify:pack`   | Check that `npm pack` ships the right files                     |
 | `yarn import:ruf`    | Import the RÚF text from a `biblia-ruf` checkout                |
-| `yarn scrape:karoli` | Scrape the Revideált Károli text into `json/karoli`             |
 | `yarn changeset`     | Add a changeset describing your change                          |
 
 Run the CLI locally with `node bin/biblia.js --help` after `yarn build`.
@@ -55,41 +54,11 @@ It expects that repository next to this one, or takes the source directory as it
 
 ### Károli
 
-`yarn scrape:karoli` fetches the Revideált Károli text from online-biblia.ro into `json/karoli`.
-
-| Flag                | Meaning                                                 |
-| ------------------- | ------------------------------------------------------- |
-| `--book=RUT,PHM`    | Comma separated canonical book ids. Defaults to all 66. |
-| `--delay=10000`     | Milliseconds between requests. Defaults to 10000.       |
-| `--out=json/karoli` | Output directory.                                       |
-| `--force`           | Rescrape books that already have a valid output file.   |
-| `--verbose`         | Log every chapter as it is fetched.                     |
-
-The site's robots.txt asks for `Crawl-delay: 10`, and the scraper honours it.
-Do not lower `--delay` below 10000.
-With 66 books and 1189 chapters a full run is about 1255 requests, so it takes roughly three and a half hours.
-
-Always start with a small subset and read the output before committing to the full run:
-
-```bash
-yarn scrape:karoli --book=RUT,PHM --out=/tmp/karoli-test
-```
-
-Only then run the whole thing:
-
-```bash
-yarn scrape:karoli
-```
-
-The run is resumable.
-A book that already has a valid file on disk is skipped, and a run that ends with failures exits 1 and prints the `--book` list to retry with.
-Book files are written to a `.tmp` name and renamed into place, so an interrupted run never leaves a half written book behind.
-
-Never commit a partial scrape.
-`json/karoli/` is either absent or complete with all 66 files, otherwise `yarn validate` and the test suite fail for everyone else.
+The Revideált Károli text was imported once and committed.
+There is no importer for it in this repository.
 
 Both translations are copyrighted (Kálvin Kiadó for RÚF, Veritas Kiadó for Károli) and are redistributed here with attribution, see the README.
-The scraper lives in `scripts/` and is never part of the published package.
+Everything in `scripts/` is build time tooling and is never part of the published package.
 
 ## Git hooks and commits
 

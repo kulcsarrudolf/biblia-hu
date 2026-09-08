@@ -479,13 +479,6 @@ normalizeKey('1. Mózes'); // '1mozes'
 Both translations are bundled as JSON under `json/ruf/` and `json/karoli/`, one file per book, 66 files each.
 Nothing is fetched at runtime.
 
-RÚF comes from the data behind [abibliamindenkie.hu](https://abibliamindenkie.hu), imported from `biblia-ruf`.
-Revideált Károli was scraped once from [online-biblia.ro](https://www.online-biblia.ro/bible/4) with the script in `scripts/scrape-karoli/`, which is build time tooling and is not part of the published package.
-
-That scrape honours the `Crawl-delay: 10` in the site's robots.txt, one request every ten seconds, which is why a full run takes about three and a half hours.
-It was run once and the result committed.
-Contributors do not need to run it, and should not: see [CONTRIBUTING.md](CONTRIBUTING.md) if you have a reason to.
-
 Both texts are under copyright and are redistributed here with the attribution their publishers require, printed in the translations table above.
 
 ## License
