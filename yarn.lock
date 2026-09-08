@@ -2477,7 +2477,7 @@ __metadata:
     typescript: "npm:^5.1.6"
     typescript-eslint: "npm:^8.62.1"
   bin:
-    biblia: ./bin/biblia.js
+    biblia: bin/biblia.js
   languageName: unknown
   linkType: soft
 

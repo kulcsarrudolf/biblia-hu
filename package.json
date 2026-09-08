@@ -20,7 +20,7 @@
     "README.md"
   ],
   "bin": {
-    "biblia": "./bin/biblia.js"
+    "biblia": "bin/biblia.js"
   },
   "engines": {
     "node": ">=18"
