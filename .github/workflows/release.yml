@@ -18,19 +18,32 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # Lets the workflow request an OIDC token, which npm exchanges for a
+      # short-lived publish credential. This is what replaces NPM_TOKEN.
       id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Changesets reads the tags and history to work out what to release.
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
+          # Required for trusted publishing. Without registry-url the OIDC
+          # exchange never happens and npm falls back to token auth.
           registry-url: "https://registry.npmjs.org"
 
       - name: Enable Corepack
         run: corepack enable
+
+      # Node 22 ships an npm older than 11.5.1, which is the first version that
+      # understands trusted publishing. changeset publish shells out to npm, so
+      # it is npm's version that matters here, not Yarn's.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -42,5 +55,5 @@ jobs:
           publish: yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          # No NODE_AUTH_TOKEN. npm detects the OIDC environment and
+          # authenticates with it, and generates provenance on its own.
