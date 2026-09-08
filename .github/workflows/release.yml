@@ -1,23 +1,24 @@
 name: Release
 
+# Publishing happens only from the release branch, never from main. Rebase
+# release onto main once the version bump is committed, push, and this runs.
 on:
   push:
     branches:
-      - main
+      - release
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    # Changesets commits "Version Packages", which is not a conventional commit,
-    # so the commitlint hook rejects it and the release dies. Git hooks are for
-    # humans writing commits, not for CI, so Husky does not get installed here.
+    # Git hooks are for humans writing commits, not for CI, so Husky does not
+    # get installed here.
     env:
       HUSKY: 0
     permissions:
+      # Lets the job push the tags that changeset publish creates.
       contents: write
-      pull-requests: write
       # Lets the workflow request an OIDC token, which npm exchanges for a
       # short-lived publish credential. This is what replaces NPM_TOKEN.
       id-token: write
@@ -48,12 +49,19 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Create release PR or publish to npm
-        uses: changesets/action@v1
-        with:
-          version: yarn version-packages
-          publish: yarn release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No NODE_AUTH_TOKEN. npm detects the OIDC environment and
-          # authenticates with it, and generates provenance on its own.
+      # A publish cannot be taken back, so the suite gates it rather than
+      # running beside it.
+      - name: Verify
+        run: |
+          yarn lint
+          yarn format:check
+          yarn coverage
+          yarn validate
+
+      # changeset publish is a no-op for versions already on the registry, so
+      # re-running this workflow is safe.
+      - name: Publish to npm
+        run: yarn release
+
+      - name: Push release tags
+        run: git push origin --tags
