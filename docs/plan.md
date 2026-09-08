@@ -322,6 +322,9 @@ Rules in CLAUDE.md apply.
 
 ### Phase 6. Károli scraper (PR 6)
 
+> Superseded. The scraper was removed from the repository after the data was imported and committed.
+> This section is kept as a record of how `json/karoli/` was produced. Do not rebuild it.
+
 Model: Opus 5 or Fable 5.1. Branch `build/karoli-scraper`.
 
 Commits:
